@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: todo-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: ToDoDB
+      MYSQL_USER: ruth
+      MYSQL_PASSWORD: r1u2t3i4w
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./TodoApi/CreateDatabase.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  # .NET API Server
+  api:
+    build:
+      context: ./TodoApi
+      dockerfile: Dockerfile
+    container_name: todo-api
+    restart: unless-stopped
+    ports:
+      - "5290:5290"
+    environment:
+      - ConnectionStrings__ToDoDB=server=mysql;user=ruth;password=r1u2t3i4w;database=ToDoDB
+      - ASPNETCORE_ENVIRONMENT=Production
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  # React Client
+  client:
+    build:
+      context: ./TodoClient
+      dockerfile: Dockerfile
+      args:
+        REACT_APP_API_URL: http://localhost:5290
+    container_name: todo-client
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+
+volumes:
+  mysql_data:
