@@ -25,15 +25,16 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// הפעלת Swagger
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-// הפעלת CORS
+// הפעלת CORS - חייב להיות ראשון!
 app.UseCors("AllowAll");
+
+// הפעלת Swagger
+app.UseSwagger();
+app.UseSwaggerUI();
+
+// Health check endpoint
+app.MapGet("/", () => "API is running!")
+   .RequireCors("AllowAll");
 
 // Routes
 
@@ -42,7 +43,8 @@ app.MapGet("/items", async (ToDoDbContext db) =>
 {
     return await db.Items.ToListAsync();
 })
-.WithName("GetAllItems");
+.WithName("GetAllItems")
+.RequireCors("AllowAll");
 
 // GET: שליפת משימה לפי ID
 app.MapGet("/items/{id}", async (int id, ToDoDbContext db) =>
@@ -50,7 +52,8 @@ app.MapGet("/items/{id}", async (int id, ToDoDbContext db) =>
     var item = await db.Items.FindAsync(id);
     return item is not null ? Results.Ok(item) : Results.NotFound();
 })
-.WithName("GetItemById");
+.WithName("GetItemById")
+.RequireCors("AllowAll");
 
 // POST: הוספת משימה חדשה
 app.MapPost("/items", async (Item item, ToDoDbContext db) =>
@@ -59,7 +62,8 @@ app.MapPost("/items", async (Item item, ToDoDbContext db) =>
     await db.SaveChangesAsync();
     return Results.Created($"/items/{item.Id}", item);
 })
-.WithName("CreateItem");
+.WithName("CreateItem")
+.RequireCors("AllowAll");
 
 // PUT: עדכון משימה מלא
 app.MapPut("/items/{id}", async (int id, Item updatedItem, ToDoDbContext db) =>
@@ -76,7 +80,8 @@ app.MapPut("/items/{id}", async (int id, Item updatedItem, ToDoDbContext db) =>
     await db.SaveChangesAsync();
     return Results.NoContent();
 })
-.WithName("UpdateItem");
+.WithName("UpdateItem")
+.RequireCors("AllowAll");
 
 // PATCH: עדכון חלקי - רק isComplete
 app.MapMethods("/items/{id}/complete", new[] { "PATCH" }, async (int id, ToDoDbContext db, bool isComplete) =>
@@ -92,7 +97,8 @@ app.MapMethods("/items/{id}/complete", new[] { "PATCH" }, async (int id, ToDoDbC
     await db.SaveChangesAsync();
     return Results.NoContent();
 })
-.WithName("UpdateItemComplete");
+.WithName("UpdateItemComplete")
+.RequireCors("AllowAll");
 
 // DELETE: מחיקת משימה
 app.MapDelete("/items/{id}", async (int id, ToDoDbContext db) =>
@@ -107,6 +113,7 @@ app.MapDelete("/items/{id}", async (int id, ToDoDbContext db) =>
     await db.SaveChangesAsync();
     return Results.NoContent();
 })
-.WithName("DeleteItem");
+.WithName("DeleteItem")
+.RequireCors("AllowAll");
 
 app.Run();

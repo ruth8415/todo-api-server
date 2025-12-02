@@ -109,3 +109,4 @@ C:\Users\user1\Desktop\תכנותתת\שנה ב\פרקטיקוד\3 - אתר\Todo
 C:\Users\user1\Desktop\תכנותתת\שנה ב\פרקטיקוד\3 - אתר\TodoApi\obj\Debug\net8.0\TodoApi.pdb
 C:\Users\user1\Desktop\תכנותתת\שנה ב\פרקטיקוד\3 - אתר\TodoApi\obj\Debug\net8.0\TodoApi.genruntimeconfig.cache
 C:\Users\user1\Desktop\תכנותתת\שנה ב\פרקטיקוד\3 - אתר\TodoApi\obj\Debug\net8.0\ref\TodoApi.dll
+C:\Users\user1\Desktop\תכנותתת\שנה ב\פרקטיקוד\3 - אתר\TodoApi\obj\Debug\net8.0\TodoApi.sourcelink.json
