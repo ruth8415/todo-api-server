@@ -120,4 +120,6 @@ app.MapDelete("/items/{id}", async (int id, ToDoDbContext db) =>
 .WithName("DeleteItem")
 .RequireCors("AllowAll");
 
-app.Run();
+// הגדרת PORT עבור Render
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
+app.Run($"http://0.0.0.0:{port}");
