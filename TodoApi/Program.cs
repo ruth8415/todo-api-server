@@ -8,16 +8,12 @@ var connectionString = builder.Configuration.GetConnectionString("ToDoDB");
 builder.Services.AddDbContext<ToDoDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
-// הוספת CORS
+// הוספת CORS - מאפשר הכל
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
+    options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins(
-                  "https://todolist-client-rmej.onrender.com",
-                  "http://localhost:3000",
-                  "http://localhost:5173"
-              )
+        policy.AllowAnyOrigin()
               .AllowAnyMethod()
               .AllowAnyHeader();
     });
@@ -30,7 +26,7 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // הפעלת CORS - חייב להיות ראשון!
-app.UseCors("AllowAll");
+app.UseCors();
 
 // הפעלת Swagger
 app.UseSwagger();
@@ -38,7 +34,7 @@ app.UseSwaggerUI();
 
 // Health check endpoint
 app.MapGet("/", () => "API is running!")
-   .RequireCors("AllowAll");
+   ;
 
 // Routes
 
@@ -48,7 +44,7 @@ app.MapGet("/items", async (ToDoDbContext db) =>
     return await db.Items.ToListAsync();
 })
 .WithName("GetAllItems")
-.RequireCors("AllowAll");
+;
 
 // GET: שליפת משימה לפי ID
 app.MapGet("/items/{id}", async (int id, ToDoDbContext db) =>
@@ -57,7 +53,7 @@ app.MapGet("/items/{id}", async (int id, ToDoDbContext db) =>
     return item is not null ? Results.Ok(item) : Results.NotFound();
 })
 .WithName("GetItemById")
-.RequireCors("AllowAll");
+;
 
 // POST: הוספת משימה חדשה
 app.MapPost("/items", async (Item item, ToDoDbContext db) =>
@@ -67,7 +63,7 @@ app.MapPost("/items", async (Item item, ToDoDbContext db) =>
     return Results.Created($"/items/{item.Id}", item);
 })
 .WithName("CreateItem")
-.RequireCors("AllowAll");
+;
 
 // PUT: עדכון משימה מלא
 app.MapPut("/items/{id}", async (int id, Item updatedItem, ToDoDbContext db) =>
@@ -85,7 +81,7 @@ app.MapPut("/items/{id}", async (int id, Item updatedItem, ToDoDbContext db) =>
     return Results.NoContent();
 })
 .WithName("UpdateItem")
-.RequireCors("AllowAll");
+;
 
 // PATCH: עדכון חלקי - רק isComplete
 app.MapMethods("/items/{id}/complete", new[] { "PATCH" }, async (int id, ToDoDbContext db, bool isComplete) =>
@@ -102,7 +98,7 @@ app.MapMethods("/items/{id}/complete", new[] { "PATCH" }, async (int id, ToDoDbC
     return Results.NoContent();
 })
 .WithName("UpdateItemComplete")
-.RequireCors("AllowAll");
+;
 
 // DELETE: מחיקת משימה
 app.MapDelete("/items/{id}", async (int id, ToDoDbContext db) =>
@@ -118,7 +114,7 @@ app.MapDelete("/items/{id}", async (int id, ToDoDbContext db) =>
     return Results.NoContent();
 })
 .WithName("DeleteItem")
-.RequireCors("AllowAll");
+;
 
 // הגדרת PORT עבור Render
 var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
