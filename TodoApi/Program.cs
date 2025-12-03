@@ -13,7 +13,11 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
     {
-        policy.AllowAnyOrigin()
+        policy.WithOrigins(
+                  "https://todolist-client-rnej.onrender.com",
+                  "http://localhost:3000",
+                  "http://localhost:5173"
+              )
               .AllowAnyMethod()
               .AllowAnyHeader();
     });
