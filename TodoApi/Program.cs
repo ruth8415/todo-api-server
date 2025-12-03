@@ -14,7 +14,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAll", policy =>
     {
         policy.WithOrigins(
-                  "https://todolist-client-rnej.onrender.com",
+                  "https://todolist-client-rmej.onrender.com",
                   "http://localhost:3000",
                   "http://localhost:5173"
               )
