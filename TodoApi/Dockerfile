@@ -17,12 +17,8 @@ WORKDIR /app
 # Copy published files
 COPY --from=build /app/publish .
 
-# Expose port
-EXPOSE 5290
-
 # Set environment variables
-ENV ASPNETCORE_URLS=http://+:5290
 ENV ASPNETCORE_ENVIRONMENT=Production
 
-# Run the application
+# Run the application - Render will set PORT automatically
 ENTRYPOINT ["dotnet", "TodoApi.dll"]
